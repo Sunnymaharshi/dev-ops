@@ -1,0 +1,149 @@
+Docker
+    Containerize the applications 
+    run each service with its own dependencies in separate containers 
+    docker hub  
+        public docker registry
+    Virtual Machines 
+        has OS, libs, deps, and app
+    Containers 
+        has libs, deps, and app
+        does not contain OS 
+    Images 
+        template used to create one or more containers 
+        if image not running any service/app, container will be stoped 
+        ex: if you run a ubuntu container, it will be stoped 
+        
+    Basic docker cmds 
+        docker run nginx
+            to run a container from images 
+            if image not found locally, it will pull the image & run
+            attach mode 
+                by default, runs the container foreground
+                docker attach <container_name> 
+                to attach background container to foreground
+            detach mode (-d)
+                runs container in background 
+            interactive mode (-i)
+                connects stdin to the docker 
+            psuedo terminal (-t)
+                connects container terminal to docker terminal
+            port mapping (-p)
+                app runs on a port inside container 
+                each container is assignment with an IP
+                it is accessibile only from inside docker host 
+                to give access outside docker host, we need to use docker host IP 
+                so we also need to map docker host port to container port 
+                ex: docker run -p 80:5000 nginx 
+                it maps port 80 of docker host to port 5000 of container 
+                can map multiple host ports to same container port
+                single host port can't have multiple container ports 
+            volume mapping (-v)
+                to persist the data of container 
+                we map host directory to container directory
+                ex: docker run -v /opt/datadir:/var/lib/mysql mysql 
+                all data is now stored in datadir instead of mysql 
+            environment variables (-e)
+                to set the environment variables in container 
+                ex: docker run -e APP_NAME=MyApp simple-app 
+            link containers (--link ) (DEPRECATED)
+                to link the containers together 
+                ex: docker run --link db:mysql app
+                creates host with name of db for mysql internal IP 
+        docker pull nginx
+            just pull the image
+        docker stop <container_name> 
+            to stop the running container 
+        docker ps 
+            lists all the running containers
+            -a flag include stoped containers as well 
+        docker inspect 
+            gives all details of the container 
+            ex: docker inspect <container_name>
+        docker logs 
+            to print the logs of the container 
+            ex: docker logs <container_name>
+        docker rm <container_name> 
+            to delete the container 
+        docker images 
+            lists available images in the host 
+        docker rmi <image_name>
+            deletes the image 
+            must delete dependent containers before deleting image 
+        to run a process after starting container 
+            ex: docker run ubuntu sleep 5 
+        exec
+            to run a cmd on running container
+            ex: docker exec <container_name> cat /etc/hosts
+        tag 
+            version of docker image 
+            by default, it is latest
+            ex: nginx:latest
+    Dockerfile 
+        used to create images 
+        instructions
+            everything on left side is instruction
+            ex: FROM, RUN, COPY, ENTRYPOINT 
+            each instruction is a LAYER 
+        arguments 
+            everything on right side of instruction
+            ex: RUN apt-get update 
+        Layers 
+            each instruction is a LAYER
+            all layers are cached, if build fails it will start from last point
+    docker build 
+        to build the image from Dockerfile
+        ex: docker build . 
+        tag(-t)
+            tag the image 
+            ex: docker build . -t my-webapp
+            it tags images as my-webapp:latest 
+    docker push 
+        published your image to docker hub 
+        must have your org name in the tag 
+    Instructions 
+        CMD 
+            to run a command in the container 
+            ex: CMD sleep 5 
+            ex: CMD ["sleep", "5"]
+        ENTRYPOINT 
+            runs command including arguments we pass through docker run 
+            ex: ENTRYPOINT ["sleep"]
+            docker run myapp 10 => it runs sleep 10 
+            to give default argument, add CMD ["5"] after ENTRYPOINT
+            must give ENTRYPOINT in JSON array format 
+            if no arguments are passed it will take CMD argument
+            override entrypoint (--entrypoint)
+                use this flag to override the entrypoint 
+                ex: docker run --entrypoint sleep myapp 10
+
+Docker Compose
+    create app with multiple containers linked using yaml file
+    used to deploy complex application stack 
+    ex:(yml file) 
+    services:
+        db:
+            image:mysql
+        myapp:
+            image: myapp
+            ports:
+                - 5000:80
+            link:
+                - db 
+    here db is same as db:db 
+    build property
+        instead of image, we can specify build file location 
+        ex: build: ./myapp 
+    
+    
+
+        
+
+        
+        
+
+        
+        
+        
+        
+         
+
