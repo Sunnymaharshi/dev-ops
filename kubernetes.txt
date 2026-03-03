@@ -1,0 +1,71 @@
+Container Orchestration 
+    platform which orchestrate the connectivity between containers and scale up/down
+
+Kubernetes 
+    Container orchestration technology from Google
+    manages and deploys thousands of containers in a cluster 
+    Container Runtime Interface (CRI)
+        allows any vendor to work as a container runtime
+        as long as they are Open Container Initiative (OCI) standard
+        like rkt (alternative to docker)
+ContainerD
+    container runtime used in docker 
+    follows OCI standard
+    comes with cli tool called ctr (not user friendly)
+    nerdctl is docker like cli tool for containerD
+    crictl is cli tool from kubernetes for CRI compatible container runtimes 
+
+Node 
+    physical/virtual machine in which kubernetes is installed
+    worker machine where containers are launched by kubernetes
+Cluster
+    set of nodes grouped together
+Master 
+    Node which manages worker nodes 
+
+Components in Kubernetes 
+    API Server 
+        like frontend to kubernetes
+        users, management device and commandline interfaces use it to interactive with cluster
+    etcd 
+        distributed key-value store
+        to store all data used to manage the cluster 
+        ensures there are not conflicts between masters about containers info 
+    Scheduler
+        distributes work and containers accross multiple nodes  
+    Controller 
+        brain of container orchestration
+        notices and responds when nodes, containers or endpoints goes down 
+        makes decision to bring up new containers
+    Container runtime 
+        underlying software used to run the containers 
+        ex: docker
+    Kubelet 
+        agent that runs on each node of the cluster 
+        makes sure that containers are running as expected
+
+Master Node vs Worker Node 
+    Worker node
+        has Container runtime & Kubelet
+    Master node 
+        has kube-apiserver, etcd, controller & scheduler 
+
+Kubectl 
+    Kube commandline tool or kube-control 
+    used to deploy and manage applications on kubernetes cluster 
+    kubectl run 
+        used to deploy app in a cluster
+        kubectl run hello-world 
+
+    kubectl cluster-info 
+        to get cluster info
+
+    kubectl get nodes 
+        to list all the nodes 
+    
+
+     
+
+
+
+

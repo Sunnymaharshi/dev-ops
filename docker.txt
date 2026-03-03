@@ -5,13 +5,14 @@ Docker
         public docker registry
     Virtual Machines 
         has OS, libs, deps, and app
-    Containers 
-        has libs, deps, and app
-        does not contain OS 
     Images 
         template used to create one or more containers 
         if image not running any service/app, container will be stoped 
         ex: if you run a ubuntu container, it will be stoped 
+    Containers 
+        Running instances of the images
+        has libs, deps, and app
+        does not contain OS 
         
     Basic docker cmds 
         docker run nginx
