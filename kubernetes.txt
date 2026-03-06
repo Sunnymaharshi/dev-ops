@@ -50,18 +50,157 @@ Master Node vs Worker Node
     Master node 
         has kube-apiserver, etcd, controller & scheduler 
 
+Pods 
+    containers are encapsulated into kubernetes object called pod 
+    smalled object you can create in kubernetes
+    while scale up, new pod is created for your app
+    Multi-container pods 
+        pod can have helper containers along with app container 
+        share same network and same storage
+        helper containers which are needed for app container to work
+
+YAML 
+    key value pair 
+        fruit: banana
+    array list 
+        ordered collection, order matters
+        fruits:
+            - banana 
+            - apple 
+    dictionary
+        unordered collection, order does not matter
+        banana:
+            calories: 105
+            fat: 0.5
+    list of dictionaries 
+        fruits:
+            - banana:
+                calories: 105
+                fat: 0.5
+            - apple
+                calories: 62
+                fat: 0.3
+Kubernetes YAML files
+    must have fields 
+    apiVersion 
+        kubernetes api version 
+    kind
+        type of object you are creating 
+        ex: Pod, Service, ReplicaSet, Deployment
+    metadata 
+        data about object in dictionary form 
+        ex: name, labels (app, type), etc 
+    spec
+        additional info about object
+        ex: containers (name, image) 
+    kubectl create -f <file-name>.yaml
+    kubectl apply -f <file-name>.yaml
+        to update pod with new changes in yaml file
+
+Replication Controller (old technology)
+    spans across multiple nodes in cluster 
+    high availability
+        if pod fails, new pod is created 
+    load balancing and scaling 
+        if load is high, new pods are added in same or across nodes 
+ReplicaSet (new technology, recommended) 
+    monitors the pods, including ones created before ReplicaSet
+    deletes pods when more pods are running than desired
+    similar to Replication Controller
+    apiVersion: apps/v1
+    template field has pod defination without apiVersion and kind
+    it uses selector field to identify the pods
+        selector:
+            matchLabels:
+                type: front-end
+    Scaling 
+        kubectl apply -f replicaset-def.yaml (after updating file)
+        kubectl scale --replicas=6 -f replicaset-def.yaml
+        kubectl scale --replicas=6 replicaset <replicaset-name>
+Deployments
+    manages the lifecycle of a containerized application
+    providing declarative updates, scaling, and self-healing capabilities. 
+    creates and manages a ReplicaSet ensures the desired number of healthy Pod replicas are running. 
+    You typically interact with Deployments rather than directly managing the underlying ReplicaSets.
+    yaml file is similar to replicaset but with kind Deployment
+    Deployment Strategies 
+        Recreate 
+            delete all old and create new 
+        Rolling Update (default)
+            delete and add new 1 by 1
+        kubectl apply -f new-deployment.yaml 
+        or 
+        kubectl set image deployment/my-deployment <container-name>=nginx:1.1
+            this won't change the deployment.yaml file 
+    While creating or updating deployment a rollout is created 
+        process of deploying containers
+    Rollback 
+        go back to previous version
+        kubectl rollout undo deployment my-deployment
+Services 
+    enables communications btw various components within and outside of application
+    NodePort 
+        makes internal port accessible on the node 
+        maps port on node to port on pod 
+        NodePort is port on the node 
+        distributes load accross the pod 
+        ex: apiVersion: v1 
+            kind: Service 
+            metadata: 
+                name: myapp-service 
+            spec: 
+                type: NodePort
+                ports:
+                    - targetPort: 80 # pod port 
+                      port: 80 # port on service
+                      nodePort: 30008 # port on node 
+                selector:
+                    app: my-app
+                    type: front-end
+    ClusterIP 
+        creates virtual IP inside cluster to enable communication between services 
+    Loadbalancer 
+        to distribute load accross pods 
+
 Kubectl 
     Kube commandline tool or kube-control 
     used to deploy and manage applications on kubernetes cluster 
-    kubectl run 
+    kubectl run nginx --image=nginx
         used to deploy app in a cluster
-        kubectl run hello-world 
-
+        creates pod and runs nginx in it 
     kubectl cluster-info 
         to get cluster info
-
     kubectl get nodes 
         to list all the nodes 
+
+    kubectl get all 
+        returns deployments, services, replicasets & pods
+    kubectl edit <kind> <name>
+        opens the defination file in edit
+        after closing editor, new changes will applied
+
+    kubectl get pods 
+    kubectl describe pod <pod-name>
+    kubectl delete pod <pod-name>
+
+    kubectl get replicaset
+    kubectl delete replicaset <replicaset-name>
+    kubectl scale --replicas=6 -f replicaset-def.yaml 
+    kubectl scale --replicas=6 replicaset <replicaset-name>
+    kubectl edit replicaset <replicaset-name>
+        opens the file to update defination
+        after saving, delete old pods
+        it creates new pods updated defination
+
+    kubectl get deployments 
+    kubectl apply -f new-deployment.yaml
+    kubectl set image deployment/<deployment-name> nginx=nginx:1.1
+            this won't change the deployment.yaml file  
+    kubectl rollout status deployment/<deployment-name>
+    kubectl rollout history deployment/<deployment-name>
+
+    
+
     
 
      
