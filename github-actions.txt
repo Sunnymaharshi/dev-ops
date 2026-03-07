@@ -1,0 +1,41 @@
+Github Actions 
+    workflow automation service by Github
+    ex: CI/CD, Code & Repository Management    
+CI/CD 
+    Continuous Integration 
+        automatically build & test code changes 
+    Continuous Delivery 
+        automatically deploy app
+Workflow 
+    attached to github repositories 
+    contains one or more jobs 
+    trigger upon events
+    files in .github/workflows/
+Jobs 
+    attached to workflow
+    defines a Runner (execution environment)
+    contains one or more steps 
+    Run in parallel (default) or sequential
+    can be conditional
+Steps 
+    attached to job 
+    execute a shell script or an action
+    can use custom or third-party actions
+    steps are executed in order
+    can be conditional
+
+Workflow example
+    name: My Workflow
+    # define events using on, manual trigger event
+    on: workflow_dispatch
+    # define jobs 
+    jobs:
+        first-job: #job name 
+            runs-on: ubuntu-latest
+            steps:
+                - name: print greeting 
+                  run: echo "Hello"
+                - name: print goodbye 
+                  run: echo "Goodbye"
+        
+
