@@ -94,6 +94,8 @@ Kubernetes YAML files
         additional info about object
         ex: containers (name, image) 
     kubectl create -f <file-name>.yaml
+    kubectl create -f .  
+        create all yaml files in current directory
     kubectl apply -f <file-name>.yaml
         to update pod with new changes in yaml file
 
@@ -159,8 +161,37 @@ Services
                     type: front-end
     ClusterIP 
         creates virtual IP inside cluster to enable communication between services 
-    Loadbalancer 
-        to distribute load accross pods 
+        IP is for internal only
+        ex: frontend services, backend services
+        it creates an IP for set of services like single IP for frontend
+        ex: apiVersion: v1 
+            kind: Service 
+            metadata: 
+                name: back-end 
+            spec: 
+                type: ClusterIP
+                ports:
+                    - targetPort: 80 # pod port 
+                      port: 80 # port on service
+                selector:
+                    app: my-app
+                    type: back-end 
+    Loadbalancer
+        distributes load accross nodes
+        connects native loadbalancer in supported cloud platforms
+        ex: apiVersion: v1 
+            kind: Service 
+            metadata: 
+                name: myapp-service 
+            spec: 
+                type: LoadBalancer
+                ports:
+                    - targetPort: 80 # pod port 
+                      port: 80 # port on service
+                      nodePort: 30008 # port on node 
+                selector:
+                    app: my-app
+                    type: front-end
 
 Kubectl 
     Kube commandline tool or kube-control 
