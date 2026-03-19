@@ -181,3 +181,99 @@ Github Repository Environments
     jobs:
         deploy: 
             environment: staging
+
+Conditional Jobs & Steps 
+    steps:
+        - name: Test code 
+          id: test
+          run: npm run test 
+        - name: Upload test report 
+          # ${{ }} syntax is optional   
+          if: failure() && steps.test.outcome == 'failure'
+    # or 
+    steps:
+        - name: Test code 
+          continue-on-error: true
+          run: npm run test 
+        - name: Upload test report 
+    continue-on-error 
+        makes Step/Job success even it is failure
+    Special Functions 
+        failure()
+            returns true if any previous step or job failed 
+        success()
+            returns true when none of previous steps have failed 
+        always()
+            always returns true
+        cancelled()
+            returns true if workflow has been cancelled
+
+Matrix Jobs 
+    Run job with multiple configurations parallelly
+    following will run 6 diff jobs each have different node-version and os
+    include and exclude key to add/remove specific combinations
+    jobs:
+        build:
+            strategy:
+                matrix:
+                    node-version: [12, 14, 16]
+                    os: [ubuntu-latest, windows-latest]
+                    include:
+                        - node-version: 18
+                          os: ubuntu-latest
+                    exclude:
+                        - node-version: 12
+                          os: windows-latest
+            runs-on: ${{ matrix.os }}
+
+Reusable Workflows 
+    workflow_call event is used to make it reusable 
+    can also add inputs & outputs to the reusable workflow
+    on:     
+        workflow_call:
+            inputs:
+                artifact-name:
+                    description: name of deployable artifact files 
+                    required: false
+                    default: dist
+                    type: string 
+            outputs:
+                result:
+                    description: result of deployment
+                    value: ${{ jobs.deploy.outputs.outcome }}
+    jobs:
+        deploy:
+            outputs:
+                outcome: ${{ steps.step-result.outputs.step-result }}
+            - name: Get code 
+              uses: actions/download-artifact@v3 
+              with: 
+                name: ${{ inputs.artifact-name }}
+            - name: Set result 
+              run: echo "step-result=success" >> $GITHUB_OUTPUT
+    usage of reusable workflow
+    deploy:
+        uses: ./.github/workflows/deploy.yml
+        with: 
+            artifact-name: dist-files
+    
+Containers for Jobs 
+    running job within a docker container 
+    jobs:
+        test: 
+            runs-on: ubuntu-latest
+            container: 
+                image: node:22
+Services (Service Containers )
+    if tests need a dummy database, we can run test db in a service container 
+    to run the tests 
+    services always run in a container
+    if job also runs in a container, communication with service container is automatically setup
+    jobs:
+        test:
+            services:
+                mondodb:
+                    image: mongo 
+                    env:
+                        USERNAME: mongo 
+                        PASSWORD: mongo
