@@ -17,6 +17,10 @@ Jobs
     contains one or more steps 
     Run in parallel (default) or sequential
     can be conditional
+    every job runs on it's own runner isolated from other jobs
+    sequential jobs 
+        needs: job-1 #or [job-1,job-2]
+            job will run after job-1 completed successfully
 Steps 
     attached to job 
     execute a shell script or an action
@@ -27,7 +31,7 @@ Steps
 Workflow example
     name: My Workflow
     # define events using on, manual trigger event
-    on: workflow_dispatch
+    on: workflow_dispatch #or [workflow_dispatch, push]
     # define jobs 
     jobs:
         first-job: #job name 
@@ -38,4 +42,60 @@ Workflow example
                 - name: print goodbye 
                   run: echo "Goodbye"
         
+Events (Workflow Triggers)
+    Repository
+        push 
+        pull_request
+        create
+            branch or tag created
+        fork
+        issues 
+        issue_comment
+            issue or pull_request comment action 
+        watch 
+            repo was starred 
+    Other 
+        workflow_dispatch   
+            manually trigger workflow
+        repository_dispatch 
+            REST API request triggers workflow
+        schedule 
+            workflow is scheduled
+        workflow_call
+            can be called by other workflows 
 
+Actions 
+    custom application that performs a frequently repeated task 
+    can build your own actions 
+    official and community actions also present in Github marketplace 
+    use uses keyword instead of run
+    ex: steps:
+            - name: Get Code 
+              uses: actions/checkout@v3
+            - name: Install NodeJS
+              uses: actions/setup-node@v3
+              with:
+                node-version: '22'
+
+Github Actions Context 
+    collection of objects that provide metadata about a workflow run, 
+    the repository, and the environment
+    github
+        The most common context, containing information about the workflow run 
+        and the event that triggered it (e.g., commit SHA, branch name, event type).
+    env
+        Contains environment variables defined at the workflow, job, or step level.
+    secrets
+        Used to access sensitive repository secrets (like API tokens) without exposing them in logs.
+    job
+        Provides status and information about the currently running job.
+    steps
+        Contains outputs and statuses from steps that have already run within the same job.
+    runner
+        Includes details about the machine executing the job, such as its operating system and architecture.
+    vars
+        Stores custom configuration variables set at the organization, repository, or environment level.
+    matrix
+        Populated with the specific properties for a job when using a build strategy matrix.
+    needs
+        Used to access outputs from jobs that the current job depends on.
