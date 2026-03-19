@@ -277,3 +277,35 @@ Services (Service Containers )
                     env:
                         USERNAME: mongo 
                         PASSWORD: mongo
+
+Custom Actions 
+    multiple steps can be grouped into single custom action 
+    .github/actions/action-name/action.yml 
+    Types
+        Javascript Actions
+            Executes a js file 
+            runs:
+                using: 'node22'
+                main: 'main.js'
+        Docker Actions 
+            create docker file with your required configuration
+            runs:
+                using: 'docker'
+                image: 'Dockerfile'
+        Composite Actions
+            combine multiple workflow steps into one single actions 
+            runs:
+                using: 'composite' 
+                steps:
+
+Security & Permissions 
+    Security Issues 
+        Script Injections 
+            value set outside workflow used in a workflow
+            ex: Issue title used inside workflow, 
+            malicious code can be passed in the title
+            fix: store user generated value as env variable before using them 
+        Malicious Third-party Actions 
+        Permission Issues 
+            give only needed permissions 
+    
